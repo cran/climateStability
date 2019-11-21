@@ -1,7 +1,6 @@
 ## ----setup, include=FALSE------------------------------------------------
 library(climateStability);
 library(raster);
-library(rangeBuilder);
 knitr::opts_chunk$set(error = TRUE);
 
 ## ----example of deviation through time with even time slices, eval=FALSE----
@@ -35,11 +34,11 @@ climateStability <- rescale0to1(precipStability * tempStability)
 
 ## ----plot stability rasters, fig.height=4, fig.width=8-------------------
 plot(precipStability, main = "Relative Precipitation Stability");
-plot(gshhs, add = T)
+plot(rangeBuilder::gshhs, add = T)
 plot(tempStability, main = "Relative Temperature Stability");
-plot(gshhs, add = T)
+plot(rangeBuilder::gshhs, add = T)
 plot(climateStability, main = "Overall Relative Climate Stability");
-plot(gshhs, add = T)
+plot(rangeBuilder::gshhs, add = T)
 
 ## ----plot latitudinal mean in stability, fig.height=4, fig.width=8-------
 #Calculate mean values at rasters
