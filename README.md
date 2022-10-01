@@ -1,5 +1,13 @@
+<!-- badges: start -->
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+[![R build status](https://github.com/hannahlowens/climateStability/workflows/R-CMD-check/badge.svg)](https://github.com/hannahlowens/climateStability/actions)
+[![cran version](https://www.r-pkg.org/badges/version/climateStability)](https://cran.r-project.org/package=climateStability)
+[![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/climateStability)](https://github.com/r-hub/cranlogs.app)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![codecov](https://codecov.io/gh/hannahlowens/climateStability/branch/master/graph/badge.svg?token=0L8KQGCDEX)](https://app.codecov.io/gh/hannahlowens/climateStability)
+[![DOI](https://zenodo.org/badge/174156227.svg)](https://zenodo.org/badge/latestdoi/174156227)
+
+<!-- badges: end -->
 
 # climateStability
 
@@ -19,28 +27,18 @@ devtools::install_github("hannahlowens/climateStability")
 ## Example
 
 This is a basic example which shows you how to calculate climate
-stability using time-slice datasets for two
-variables:
+stability using time-slice datasets for two variables:
 
 ``` r
-# Set the working directory where you climate data are located (one sub-folder per variable)
-dir <- "yourDirectory"
-
 # First, calculate deviation through time using even time slices
-precipDeviation <- deviationThroughTime(variableDirectory = 
-                                          paste(dir, "../../ClimateStabilityManuscript/precipfiles/", sep = ""),
-                                        timeSlicePeriod = 1000);
-temperatureDeviation <- deviationThroughTime(variableDirectory = 
-                                               paste(dir, "../../ClimateStabilityManuscript/tempfiles/", sep = ""),
-                                             timeSlicePeriod = 1000);
+precipDeviation <- deviationThroughTime(variableDirectory = "YOUR_DIRECTORY/precipitationFiles/",
+                                        timeSlicePeriod = 1000, fileExtension = "asc");
+temperatureDeviation <- deviationThroughTime(variableDirectory = "YOUR_DIRECTORY/temperatureFiles/",
+                                             timeSlicePeriod = 1000, fileExtension = "asc");
 
-# Next, calculate stability for each variable (the inverse of deviation)
-precipInvDev <- 1/precipDeviation;
-tempInvDev <- 1/temperatureDeviation;
-
-# Then rescale the stability estimates between 0 and 1
-precipStability <- rescale0to1(precipInvDev);
-tempStability <- rescale0to1(tempInvDev);
+# Next, calculate stability for each variable (the inverse of deviation, scaled to between 0 and 1)
+precipInvDev <- stabilityCalc(precipDeviation);
+tempInvDev <- stabilityCalc(temperatureDeviation);
 
 # Finally, multiply them together and rescale to estimate relative climate stability
 climateStability <- rescale0to1(precipStability * tempStability)
@@ -69,8 +67,8 @@ citation(package = "climateStability")
 #> 
 #> To cite climateStability in publications use:
 #> 
-#>   Owens, H.L., Guralnick, R., 2019. climateStability: An R package
-#>   to estimate climate stability from time-slice climatologies.
+#>   Owens, H.L., Guralnick, R., 2019. climateStability: An R package to
+#>   estimate climate stability from time-slice climatologies.
 #>   Biodiversity Informatics 14, 8–13.
 #>   https://doi.org/10.17161/bi.v14i0.9786
 #> 

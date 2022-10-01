@@ -1,10 +1,11 @@
 #' @title absLatitudinalMean
 #'
-#' @description A function to calculate mean values of a raster at the absolute value of latitude, at the resolution of a given raster layer.
+#' @description A function to calculate mean values of a `SpatRaster` at the absolute value of latitude,
+#' at the resolution of the given raster layer.
 #'
-#' @param rasterForCalculation A raster that contains data for plotting according to latitudinal value
+#' @param rasterForCalculation A `SpatRaster` that contains data for plotting according to latitudinal value
 #'
-#' @return A vector of mean raster values for each absolute value of latitude.
+#' @return A vector of mean values for each absolute latitude value.
 #'
 #' @keywords manip
 #'
@@ -15,9 +16,13 @@
 #'
 #' @seealso \code{\link{latitudinalMean}} for calculating mean values of rasters for all latitudinal bands.
 #'
+#' @importFrom terra crds as.points
+#' @importFrom methods is
+#'
 #' @examples
 #'
-#' data(precipDeviation)
+#' precipDeviation <- terra::rast(system.file("extdata/precipDeviation.asc",
+#'                                            package = "climateStability"))
 #' precipStability <- 1/precipDeviation
 #' alm <- absLatitudinalMean(rasterForCalculation = precipStability)
 #' plot(alm, main = "Precipitation Stability by Absolute Latitude",
@@ -25,8 +30,14 @@
 #'
 #' @export
 absLatitudinalMean <- function(rasterForCalculation){
-  pointExt <- as.data.frame(raster::rasterToPoints(rasterForCalculation)[,1:3])
-  pointExtData <- as.data.frame(pointExt)
+  if (!is(rasterForCalculation, "SpatRaster")){
+    warning("Supplied argument is not a SpatRaster./n", sep = "")
+    return(NULL)
+  }
+
+  spatVect <- as.points(rasterForCalculation)
+  pointExtData <- cbind(as.data.frame(terra::crds(spatVect)),
+                        as.data.frame(spatVect))
   latData <- matrix(nrow = length(unique(abs(pointExtData$y))), ncol = 2)
   latData[,1] <- sort(unique(abs(pointExtData$y)))
   colnames(latData) <- c("Latitude",  "Value")

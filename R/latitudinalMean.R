@@ -12,21 +12,31 @@
 #' Owens, H.L., Guralnick, R., 2019. climateStability: An R package to estimate
 #' climate stability from time-slice climatologies. Biodiversity Informatics
 #' 14, 8–13. https://doi.org/10.17161/bi.v14i0.9786
+#'
 #' @seealso \code{\link{absLatitudinalMean}} to calculate mean value for each absolute value of latitude.
 #'
 #' @examples
 #'
-#' data(precipDeviation)
+#' precipDeviation <- terra::rast(system.file("extdata/precipDeviation.asc",
+#'                                             package = "climateStability"))
 #' precipStability <- 1/precipDeviation
-#' latMean <- absLatitudinalMean(rasterForCalculation = precipStability)
+#' latMean <- latitudinalMean(rasterForCalculation = precipStability)
 #' plot(latMean, main = "Precipitation Stability by Latitude",
 #' ylab = "Relative Stability", type = "l")
 #'
-#' @importFrom raster raster
+#' @importFrom terra as.points crds
+#' @importFrom methods is
+#'
 #' @export
 latitudinalMean <- function(rasterForCalculation){
-  pointExt <- as.data.frame(raster::rasterToPoints(rasterForCalculation)[,1:3])
-  pointExtData <- as.data.frame(pointExt)
+  if (!is(rasterForCalculation, "SpatRaster")){
+    warning("Supplied argument is not a SpatRaster./n", sep = "")
+    return(NULL)
+  }
+
+  spatVect <- terra::as.points(rasterForCalculation)
+  pointExtData <- cbind(as.data.frame(terra::crds(spatVect)),
+                        as.data.frame(spatVect))
   latData <- matrix(nrow = length(unique(pointExtData$y)), ncol = 2)
   latData[,1] <- sort(unique(pointExtData$y))
   colnames(latData) <- c("Latitude",  "Value")
